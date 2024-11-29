@@ -1,4 +1,4 @@
-package view;
+package view.Panels;
 
 public class GridPanel {
 }

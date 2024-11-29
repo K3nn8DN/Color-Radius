@@ -2,10 +2,8 @@ package controller;
 
 import java.util.List;
 
-import model.Board;
-import model.Model;
-import view.Panel;
-import view.View;
+import model.boards.Board;
+import view.Panels.Panel;
 
 public interface Controller {
   void startGame(List<Panel> panels, Board board);

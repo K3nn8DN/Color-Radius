@@ -3,7 +3,9 @@ package model;
 import java.util.List;
 
 import controller.Controller;
-import view.Panel;
+import model.boards.Board;
+import model.cards.Card;
+import view.Panels.Panel;
 
 public interface Model extends ReadOnlyModel{
    void setController(Controller controller);

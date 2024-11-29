@@ -1,9 +1,10 @@
-package model;
+package model.boards;
 
 import java.util.List;
 import java.util.Map;
 
-import view.Panel;
+import model.Coordinate;
+import view.Panels.Panel;
 
 public interface Board {
   Map<Coordinate, Panel> createBoard(List<Panel> panels);

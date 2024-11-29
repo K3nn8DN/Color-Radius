@@ -2,11 +2,10 @@ package controller;
 
 import java.util.List;
 
-import model.Board;
-import model.Card;
+import model.boards.Board;
+import model.cards.Card;
 import model.Model;
-import model.Phase;
-import view.Panel;
+import view.Panels.Panel;
 import view.View;
 
 public class GameController implements Controller {

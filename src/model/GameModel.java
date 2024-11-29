@@ -2,13 +2,13 @@ package model;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import controller.Controller;
-import view.Panel;
+import model.boards.Board;
+import model.cards.Card;
+import view.Panels.Panel;
 
 public class GameModel implements Model {
   Map<Coordinate, Panel> grid;
