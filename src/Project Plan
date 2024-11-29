@@ -1,8 +1,8 @@
-the game has 2 phases
+the gamephases
    setup
    place pebbles
    playing card
-   moving pebble
+   playing pebble
    end game
 
 
@@ -22,7 +22,7 @@ the controller start game takes in the board and list of panels and send the inf
 model setup method
 
 the model setup makes a grid using a list of colors to change the color of the panels, a
-unused pebble list, a hand list and updates hand size
+unused pebble list, a hand list(randomized) and updates hand size
 
 grid : made with a width and height has  a map of coordainate to panel
 pebble : has a color
@@ -42,13 +42,182 @@ view places pebles by on click a panle it sends itself to the controller
  the controller checks if if its pebble placing phase then if the pebble can be placed here if so
  it calls pebble.setCoordinate(x,y)
 
-after all pebbles are placed phase changes to playing card phase "choose a card to apply to the
-last moved piece"
+after all pebbles are placed phase changes to playing card phase
+        "choose a card to apply to the last moved piece"
 
+model sends the change to the controller as allways but since the view is changed it's handled
+differently
+controller checks if the phase is playing card and if so it send to the view make playing scene
+view renders the playing scene with the cards to pick from and the filled grid
+when a player clicks a card it sends to click panel and click panel converts the coordinate into a
+card index and sends said index to the controller
+
+the controller recives the index and updates it's current clicked card
+
+back in the view the player clicks in the grid which allerts a game panel and the panel returns
+itself to the controller
+
+the controller recives the panel, it checks if current clicked card isn't null if it is throw
+error if not check if the panel has a piece on it if not throw error if so send to model with the
+card and the panel
+
+model recives the card and panel and uses the card to return panels to remove from the map
+(note: overide hash map and equals methode in a class will ensure that when using map.get you can
+use an eqivalent object not just the original)
+
+card: uses command pattern executes logic for itself
+
+after model finishes logic it changes phase to playing pebble and send an update to the controller
+controller then sends the event to correct view methode based on phase in this case render playing
+pebble
+view renders the playing pebble phase by having no cards and only the grid
+
+the player can now click on a panel and return itself to the controller
+the controller will either set that panels dot as golden/clicked or set everyone elses dot as not
+golden/clicked and update it's current clicked
+
+the player can then click on another panel or the same panel both of which return themselves to the
+ controller
+
+ the controller will check if the panel is the same as the clicked one if so it will unclick it if
+ not it will check if the other panel does not have a piece on it and if so it calls
+ or send to model to do that model.movePebble(panel from, panel to)
+ model calls  panel.setPebble(current pebble / null); then sets the phase to playing card
+ randomizing the cards
 
 
 how to set up reorganizing the board
      when pannels are removed that panel turns black and has the feild isRemoved to be true
      when there are enogh removed go through and redo? them
         map.put("removed one", map.get("object two")); then map.remove
+
+
+
+Reorganized Note:
+ Game Phases
+
+    Setup Phase
+        Players select the board and the number of cards.
+        The model initializes the grid, pebble list, and player hands.
+        The view displays the grid and pebble list.
+
+    Pebble Placement Phase
+        Players place pebbles on the grid.
+        Once all pebbles are placed, the phase transitions to the card-playing phase.
+
+    Card-Playing Phase
+        Players select a card and apply it to a pebble on the grid.
+        The phase alternates between card-playing and pebble-moving.
+
+    Pebble-Moving Phase
+        Players move pebbles based on game rules.
+        Phase alternates back to card-playing or ends when conditions are met.
+
+    End Game Phase
+        The game ends based on specific criteria (e.g., enough panels removed).
+        The view displays the results.
+
+ System Overview
+
+1. Initialization
+
+   Model: Initializes game logic, including the grid, pebble list, and player hands.
+   View: Sets up the UI, including panels for the grid and pebble list.
+   Controller:
+   Links the model and view.
+   Registers itself as a listener to handle interactions.
+
+2. Starting the Game
+
+   The controller prompts the view to display the start menu.
+   Players select a board and card count.
+   Action: View sends this input to the controller.
+   Controller: Calls the model's setup() method with this data.
+
+3. Setup Phase Logic
+
+   Model:
+   Generates the grid (a map of Coordinate to Panel).
+   Creates a list of pebbles with random colors.
+   Randomizes player hands and sets hand size.
+   View:
+   Displays the grid and pebble list.
+   Shows pebbles as colored dots on panels. Empty panels display their color.
+
+4. Pebble Placement Phase
+
+   View:
+   Pebbles are displayed as selectable items at the bottom of the screen.
+   Clicking a pebble sends its reference to the controller.
+   Controller:
+   Checks if it's the correct phase.
+   Ensures the selected panel is valid for placement.
+   Updates the model to place the pebble on the selected panel.
+   Model:
+   Updates the panel's pebble field.
+   Notifies the controller of changes.
+   Phase transitions to Card-Playing after all pebbles are placed.
+
+5. Card-Playing Phase
+
+   View:
+   Displays the grid and the player's hand of cards.
+   Players select a card and a panel on the grid.
+   Controller:
+   Validates the selected card and panel (e.g., panel must have a piece).
+   Sends the card and panel to the model.
+   Model:
+   Uses the card's logic (via the Command pattern) to determine which panels or pebbles to affect.
+   Updates the grid and notifies the controller.
+   If card logic removes panels:
+   Updates them as "removed" (e.g., blackened panels with isRemoved = true).
+   Triggers the board reorganization when enough panels are removed.
+
+6. Pebble-Moving Phase
+
+   View:
+   Displays the grid. No cards are visible.
+   Allows players to click panels to move pebbles.
+   Controller:
+   Handles clicks and tracks the "from" and "to" panels.
+   Validates the move (e.g., ensures the destination is valid).
+   Sends the move to the model.
+   Model:
+   Updates the pebble's location.
+   Changes the phase back to Card-Playing and randomizes cards.
+
+7. End Game Phase
+
+   Model:
+   Determines game-end conditions (e.g., enough removed panels).
+   Notifies the controller of the game's end.
+   Controller:
+   Sends the event to the view.
+   View:
+   Displays the final game state and results.
+
+ Additional Details
+
+Coordinate and Panel
+
+    Coordinate:
+        Holds x and y values.
+        Implements equals and hashCode to ensure two coordinates with the same values
+        are treated as equivalent.
+    Panel:
+        Has a Coordinate, Color, and an optional Pebble.
+        Tracks its removal status with isRemoved.
+
+Card Logic
+
+    Implemented using the Command Pattern:
+        Each card encapsulates its logic for modifying the grid or pebbles.
+        The model executes the card's logic when it receives the selected card.
+
+Board Reorganization
+
+    When enough panels are removed:
+        The model reorganizes the board:
+            Example: Moves existing mappings in the grid
+            (e.g., map.put("removed one", map.get("object two"))) and removes invalid entries.
 
