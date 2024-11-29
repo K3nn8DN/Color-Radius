@@ -24,11 +24,10 @@ model setup method
 the model setup makes a grid using a list of colors to change the color of the panels, a
 unused pebble list, a hand list(randomized) and updates hand size
 
-grid : made with a width and height has  a map of coordainate to panel
-pebble : has a color
+grid : a map of coordainate to panel
+pebble :  a color
 
 view shows the grid by looping through each panel if it has a pebble it shows a dot of that color
-it also gets the color
 
 panel : has a coordinate, a color and a pebble
 
@@ -40,12 +39,12 @@ component in controller
 
 view places pebles by on click a panle it sends itself to the controller
  the controller checks if if its pebble placing phase then if the pebble can be placed here if so
- it calls pebble.setCoordinate(x,y)
+ pannel.placepebble
 
 after all pebbles are placed phase changes to playing card phase
         "choose a card to apply to the last moved piece"
 
-model sends the change to the controller as allways but since the view is changed it's handled
+model sends the change to the controller as allways but since the phase is changed it's handled
 differently
 controller checks if the phase is playing card and if so it send to the view make playing scene
 view renders the playing scene with the cards to pick from and the filled grid

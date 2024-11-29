@@ -1,14 +1,17 @@
 package view;
 
+import controller.Controller;
+import model.Model;
+
 public interface View {
 
-   /**
-    * set model methode
-    * render start game menu
-    * render pebble placing
-    * render playing card
-    * render playing pebble
-    * render end game menu
-    * controller handels when these are done
-    */
+   void setModel(Model model);
+   void setController(Controller controller);
+   void renderStart();
+   void renderPlacePebble();
+   void renderPlayCard();
+   void renderPlayPebble();
+   void renderEnd();
+   void handleErrorMessage(String error);
+
 }
