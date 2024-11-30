@@ -13,7 +13,12 @@ public class CornersCard extends Card {
   }
   @Override
   public String toString() {
-    return "AdjacentCard";
+    return "Corner Card";
+  }
+
+  @Override
+  public String description() {
+    return "Removes all pebbles in the four corners of a piece";
   }
 
 }

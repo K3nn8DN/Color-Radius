@@ -2,12 +2,12 @@ package model.boards;
 
 public class OneToOneBoard extends Board {
   @Override
-  protected float getwidth() {
+  public float getwidth() {
     return 5;
   }
 
   @Override
-  protected float getheight() {
+  public float getheight() {
     return 4;
   }
 

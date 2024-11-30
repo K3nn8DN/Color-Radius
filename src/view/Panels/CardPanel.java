@@ -5,9 +5,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 
 import controller.Controller;
-import model.boards.Board;
 import model.cards.Card;
 import view.GameView;
 
@@ -16,25 +16,31 @@ public class CardPanel  extends JPanel{
   Card card;
   GameView frame;
   Controller controller;
+  int index;
 
 
-  public CardPanel(Image image, Card card, GameView gameView,Controller controller) {
+  public CardPanel(Image image, Card card, GameView gameView,Controller controller,int index) {
     this.image = image;
     this.card = card;
     this.frame = gameView;
     this.controller = controller;
     this.addMouseListener(new CardPanel.CardClickListener(this));
+
+
   }
-  public CardPanel(Card card, GameView gameView,Controller controller) {
+  public CardPanel(Card card, GameView gameView,Controller controller, int index) {
     this.card = card;
     this.frame = gameView;
     this.controller = controller;
     this.addMouseListener(new CardPanel.CardClickListener(this));
+
+    this.add(new JLabel(card.toString()));
   }
 
   public void sendController() {
     controller.updateClick(this.card);
   }
+
 
 
   static class CardClickListener implements MouseListener {

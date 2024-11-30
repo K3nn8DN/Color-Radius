@@ -15,7 +15,10 @@ public interface Model extends ReadOnlyModel{
    void movePebble(Panel from, Panel to);
    List<Color> getPebbles();
    void placePebble(int index, Panel to);
+   void removePannel(Panel panel);
+   List<Color> getRemoveColors();
    void playCard(Card card, Panel panel);
+   List<Card> getCards();
    void reorderGrid();
 
 

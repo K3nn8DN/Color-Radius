@@ -10,6 +10,7 @@ public interface View {
    void renderStart();
    void renderPlacePebble();
    void renderPlayCard();
+   void renderRemovePhase();
    void renderPlayPebble();
    void renderEnd();
    void handleErrorMessage(String error);

@@ -18,6 +18,11 @@ public class FullRadiusCard extends Card {
   }
   @Override
   public String toString() {
-    return "AdjacentCard";
+    return "Full Radius";
+  }
+
+  @Override
+  public String description() {
+    return "Remove all pebbles around a piece";
   }
 }

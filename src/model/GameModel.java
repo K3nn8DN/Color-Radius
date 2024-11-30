@@ -19,8 +19,9 @@ public class GameModel implements Model {
   private Phase phase= Phase.SETUP;
   private Controller controller;
   private List<Color> unusedPebbles;
-  private List<Coordinate> inactive;
+  private List<Coordinate> inactive = new ArrayList<Coordinate>();
   private List<Card> cards = new ArrayList<Card>();
+  List<Color> removeColors = new ArrayList<Color>();
 
   @Override
   public void setController(Controller controller) {
@@ -88,11 +89,40 @@ public class GameModel implements Model {
   }
 
   @Override
+  public void removePannel(Panel panel) {
+    if(removeColors.contains(panel.getColor()) || panel.getColor() == Color.white) {
+      panel.setActive(false);
+      removeColors.remove(panel.getColor());
+      panel.setColor(Color.black);
+      panel.setPebble(null);
+    }
+    else{
+      throw new IllegalArgumentException("colors must match");
+    }
+    if(removeColors.isEmpty()){
+      phase = Phase.PLAYPEBBLE;
+      reorderGrid();
+    }
+    sendUpdate();
+  }
+
+  @Override
+  public List<Color> getRemoveColors() {
+    return removeColors;
+  }
+
+  @Override
   public void playCard(Card card, Panel panel) {
-    List<Coordinate> coordList = card.Play(panel,grid);
-    inactive.addAll(coordList);
+    inactive.addAll(card.Play(panel,grid));
+    removeColors = card.getColors();
+    phase = Phase.REMOVE;
     isGameOver();
     sendUpdate();
+  }
+
+  @Override
+  public List<Card> getCards() {
+    return cards;
   }
 
 
@@ -154,9 +184,7 @@ public class GameModel implements Model {
   @Override
   public List<Panel> getPanels() {
     List<Panel> panels = new ArrayList<Panel>();
-    for (Panel value : grid.values()) {
-      panels.add(value);
-    }
+    panels.addAll(grid.values());
     return panels;
   }
 }

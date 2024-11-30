@@ -6,7 +6,7 @@ import model.boards.Board;
 import view.Panels.Panel;
 
 public interface Controller {
-  void startGame(List<Panel> panels, Board board);
+  void startGame(List<Panel> panels, Board board, int handSize);
   void updateGrid(Panel panel);
   void updateClick(Object click);
   void update();

@@ -7,6 +7,7 @@ import java.awt.event.MouseListener;
 import javax.swing.*;
 
 import controller.Controller;
+import model.Coordinate;
 import view.GameView;
 
 public class GridPanel extends JPanel implements Panel {
@@ -14,6 +15,7 @@ public class GridPanel extends JPanel implements Panel {
   Controller controller;
   Color color;
   boolean isActive=true;
+  Coordinate coord;
 
 
   public GridPanel(Controller controller) {
@@ -86,6 +88,8 @@ public class GridPanel extends JPanel implements Panel {
   public void setActive(boolean active) {
     this.isActive = active;
   }
+
+
   static class GridClickListener implements MouseListener {
     private final GridPanel panel;
 

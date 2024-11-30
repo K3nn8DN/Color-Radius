@@ -3,12 +3,12 @@ package model.boards;
 
 public class OneHalfBoard extends Board {
   @Override
-  protected float getwidth() {
+  public float getwidth() {
     return 6;
   }
 
   @Override
-  protected float getheight() {
+  public float getheight() {
     return 4;
   }
 

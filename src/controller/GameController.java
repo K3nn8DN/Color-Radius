@@ -10,8 +10,8 @@ import view.Panels.Panel;
 import view.View;
 
 public class GameController implements Controller {
-  private Model model;
-  private View view;
+  private final Model model;
+  private final View view;
   private Object currentClick;
 
   public GameController(Model model, View view) {
@@ -25,9 +25,14 @@ public class GameController implements Controller {
 
 
   @Override
-  public void startGame(List<Panel> panels, Board board) {
-    this.model.setUp(panels, board);
-    currentClick = null;
+  public void startGame(List<Panel> panels, Board board, int handSize) {
+    if(handSize != 0) {
+      this.model.setUp(panels, board);
+      currentClick = null;
+    }
+    else{
+      throw new IllegalArgumentException("Hand size must be greater than 0");
+    }
 
   }
 
@@ -41,6 +46,12 @@ public class GameController implements Controller {
         }
         else if (model.getPhase() == Phase.PLACEPEBBLE) {
           throw new IllegalArgumentException("click a pebble first");
+        }
+        else if(model.getPhase() == Phase.REMOVE){
+          model.removePannel(panel);
+        }
+        else if (model.getPhase() == Phase.PLAYCARD){
+          throw new IllegalArgumentException("click a card first");
         }
         else {
           throw new IllegalArgumentException("cannot play to a spot with a pebble");
@@ -62,7 +73,7 @@ public class GameController implements Controller {
             }
             break;
           case PLAYCARD:
-            model.playCard((Card) currentClick, panel);
+            model.playCard((Card)currentClick, panel);
             currentClick = null;
             break;
           default:
@@ -73,7 +84,7 @@ public class GameController implements Controller {
 
     }
     else {
-      throw new IllegalArgumentException("must play to an active panel");
+      throw new IllegalArgumentException("must be an active panel");
     }
   }
 
@@ -98,11 +109,12 @@ public class GameController implements Controller {
         break;
       case PLAYPEBBLE:
         view.renderPlayPebble();
-
         break;
       case PLAYCARD:
         view.renderPlayCard();
-
+        break;
+      case REMOVE:
+        view.renderRemovePhase();
         break;
       case ENDGAME:
         view.renderEnd();

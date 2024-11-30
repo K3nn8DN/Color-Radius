@@ -2,6 +2,8 @@ package view.Panels;
 
 import java.awt.*;
 
+import model.Coordinate;
+
 public interface Panel {
   void sendController();
   Color getPebble();

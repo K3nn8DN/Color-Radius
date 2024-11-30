@@ -19,7 +19,12 @@ public class AdjacentCard extends Card {
   }
   @Override
   public String toString() {
-    return "AdjacentCard";
+    return "Adjacent Card";
+  }
+
+  @Override
+  public String description() {
+    return "Removes all Adjacent Cards next to a piece";
   }
 }
 

@@ -3,7 +3,8 @@ package model.boards;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,11 +12,11 @@ import model.Coordinate;
 import view.Panels.Panel;
 
 public abstract class Board {
-  private Map<Coordinate, Panel> grid= new HashMap<Coordinate, Panel>();
+  private Map<Coordinate, Panel> grid= new LinkedHashMap<Coordinate, Panel>();
   private List<Color> colors = new ArrayList<Color>();
   private List<Color> pebbles;
-  protected abstract float getwidth();
-  protected abstract float getheight();
+  public abstract float getwidth();
+  public abstract float getheight();
   protected abstract float getStop();
 
   Board(){
@@ -40,15 +41,20 @@ public abstract class Board {
     }
   }
   public Map<Coordinate, Panel> createBoard(List<Panel> panels) {
+
     Collections.shuffle(colors);
     int counter = 0;
-    for (int i = 1; i < getwidth()+1; i++) {
-      for (int j = 1; j < getheight()+1; j++) {
-        panels.get(counter).setColor(colors.get(counter));
-        grid.put(new Coordinate(i,j),panels.get(counter));
+    for (int row = 1; row <= getheight(); row++) {
+      for (int col = 1; col <= getwidth(); col++) {
+        Panel panel = panels.get(counter);
+        Coordinate coord = new Coordinate(row, col); // Row-first assignment
+        grid.put(coord, panel);
+        panel.setColor(colors.get(counter));
         counter++;
       }
+
     }
+
     return grid;
   }
 

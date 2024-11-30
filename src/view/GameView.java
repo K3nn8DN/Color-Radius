@@ -2,6 +2,7 @@ package view;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import controller.Controller;
@@ -9,6 +10,7 @@ import model.Model;
 import model.boards.OneHalfBoard;
 import model.boards.OneToOneBoard;
 import model.boards.ThreeToFiveBoard;
+import model.cards.Card;
 import view.Panels.BoardPanel;
 import view.Panels.CardPanel;
 import view.Panels.GridPanel;
@@ -21,7 +23,7 @@ public class GameView extends JFrame implements View {
   Controller controller;
   BoardPanel activeBoard;
   CardPanel activeCard;
-  int activeHand;
+  int activeHand=0;
 
   public GameView(){
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -50,12 +52,12 @@ public class GameView extends JFrame implements View {
 
   @Override
   public void renderStart() {
-    // Create a panel for the cards
     this.getContentPane().removeAll();
     int width=this.getWidth();
     this.setLayout(new GridLayout(0, 1));
-    JPanel cardPanel = new JPanel();
-    cardPanel.setLayout(new FlowLayout());
+
+    JPanel boardPanel = new JPanel();
+    boardPanel.setLayout(new FlowLayout());
     JPanel boardOneHalf = new BoardPanel(new OneHalfBoard(), this);
     JPanel boardOneOne = new BoardPanel(new OneToOneBoard(), this);
     JPanel boardThreeFive = new BoardPanel(new ThreeToFiveBoard(), this);
@@ -65,27 +67,24 @@ public class GameView extends JFrame implements View {
     boardThreeFive.setBackground(Color.BLACK);
     boardOneOne.setBackground(Color.BLACK);
     boardOneHalf.setBackground(Color.BLACK);
-    cardPanel.add(boardOneHalf);
-    cardPanel.add(boardOneOne);
-    cardPanel.add(boardThreeFive);
+    boardPanel.add(boardOneHalf);
+    boardPanel.add(boardOneOne);
+    boardPanel.add(boardThreeFive);
 
-    // Create a panel for the buttons
     JPanel buttonPanel = new JPanel();
     buttonPanel.setLayout(new FlowLayout());
-    JButton button1 = new JButton("Button 1");
-    JButton button2 = new JButton("Button 2");
-    JButton button3 = new JButton("Button 3");
+    JButton button1 = new JButton("1");
+    JButton button2 = new JButton("3");
+    JButton button3 = new JButton("5");
     buttonPanel.add(button1);
     buttonPanel.add(button2);
     buttonPanel.add(button3);
 
-    // Create a panel for the start game button
     JPanel startGamePanel = new JPanel();
     JButton startGameButton = new JButton("Start Game");
     startGamePanel.add(startGameButton);
 
-    // Add the panels to the frame
-    this.add(cardPanel, BorderLayout.NORTH);
+    this.add(boardPanel, BorderLayout.NORTH);
     this.add(buttonPanel, BorderLayout.CENTER);
     this.add(startGamePanel, BorderLayout.SOUTH);
 
@@ -94,11 +93,9 @@ public class GameView extends JFrame implements View {
     button2.addActionListener(e -> activeHand = 3);
     button3.addActionListener(e -> activeHand = 5);
     startGameButton.addActionListener(e -> controller.startGame(makePannels(),
-            activeBoard.getBoard()));
+            activeBoard.getBoard(),activeHand));
 
-    // Make the frame visible
     this.setVisible(true);
-
     this.revalidate();
     this.repaint();
 
@@ -106,26 +103,13 @@ public class GameView extends JFrame implements View {
 
   @Override
   public void renderPlacePebble() {
-    this.getContentPane().removeAll();
+    renderPlay();
     int width=this.getWidth();
-    this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 
-
-    JPanel gridPanel = new JPanel();
-    gridPanel.setLayout(new GridLayout(5,5));
-    for (int i = 0; i < activeBoard.getBoard().getSize(); i++) {
-      JPanel panel2 = (GridPanel) model.getPanels().get(i);
-      panel2.setPreferredSize(new Dimension(width / 4, width / 4));
-      panel2.setBackground(model.getPanels().get(i).getColor());
-      panel2.setBorder(BorderFactory.createLineBorder(Color.black));
-      gridPanel.add(panel2);
-    }
-    this.add(gridPanel);
-
-    JPanel cardPanel = new JPanel();
-    cardPanel.setLayout(new FlowLayout());
-    cardPanel.setBackground(Color.black);
-    cardPanel.setPreferredSize(new Dimension(width/3, width/3));
+    JPanel pebblePanel = new JPanel();
+    pebblePanel.setLayout(new FlowLayout());
+    pebblePanel.setBackground(Color.black);
+    pebblePanel.setPreferredSize(new Dimension(width/3, width/3));
     for (int i = 0; i < model.getPebbles().size(); i++) {
       Color color = model.getPebbles().get(i);
       int num = i;
@@ -133,46 +117,59 @@ public class GameView extends JFrame implements View {
       button.setBackground(color);
       button.setPreferredSize(new Dimension(width / 20, width / 20));
       button.addActionListener(e -> controller.updateClick(num))  ;
-      cardPanel.add(button);
+      pebblePanel.add(button);
 
     }
+    this.add(pebblePanel);
 
-    this.add(cardPanel);
-
-
-
-    // Make the frame visible
-    this.setVisible(true);
-    this.revalidate();
-    this.repaint();
+    render();
   }
 
   @Override
   public void renderPlayCard() {
-    this.getContentPane().removeAll();
-    this.setBackground(Color.BLACK);
+    renderPlay();
     int width=this.getWidth();
-    this.setLayout(new GridLayout(0, 1));
+
+
     JPanel cardPanel = new JPanel();
     cardPanel.setLayout(new FlowLayout());
+    cardPanel.setBackground(Color.black);
+    cardPanel.setPreferredSize(new Dimension(width/3, width/3));
+    Collections.shuffle(model.getCards());
+    for (int i = 0; i < activeHand; i++) {
+      int num = i;
+      JPanel card = new CardPanel(model.getCards().get(i),this,controller,i);
+      card.setBackground(Color.blue);
+      card.setPreferredSize(new Dimension(width / 4, width / 4));
+      card.setBorder(BorderFactory.createBevelBorder(2));
+      cardPanel.add(card);
+    }
+    this.add(cardPanel);
 
-//
-//    this.add(cardPanel, BorderLayout.NORTH);
-//    this.add(buttonPanel, BorderLayout.CENTER);
-//    this.add(startGamePanel, BorderLayout.SOUTH);
-//
-
-
-
-
-
-    this.revalidate();
-    this.repaint();
-
-
-
-
+    render();
   }
+
+  public void renderRemovePhase(){
+    renderPlay();
+    int width=this.getWidth();
+
+    JPanel colorPanel = new JPanel();
+    colorPanel.setLayout(new FlowLayout());
+    colorPanel.setBackground(Color.black);
+    colorPanel.setPreferredSize(new Dimension(width/3, width/3));
+    Collections.shuffle(model.getCards());
+    for (int i = 0; i < model.getRemoveColors().size(); i++) {
+      JPanel removeColor = new JPanel();
+      removeColor.setBackground(model.getRemoveColors().get(i));
+      removeColor.setPreferredSize(new Dimension(width / 6, width / 6));
+      removeColor.setBorder(BorderFactory.createBevelBorder(2));
+      colorPanel.add(removeColor);
+    }
+    this.add(colorPanel);
+
+    render();
+  }
+
 
   @Override
   public void renderPlayPebble() {
@@ -192,6 +189,31 @@ public class GameView extends JFrame implements View {
     this.getContentPane().removeAll();
     this.setBackground(Color.BLACK);
 
+    this.revalidate();
+    this.repaint();
+  }
+
+  private void renderPlay(){
+    this.getContentPane().removeAll();
+    int width=this.getWidth();
+    this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
+
+    JPanel gridPanel = new JPanel();
+    gridPanel.setLayout(new GridLayout((int)activeBoard.getBoard().getheight(),
+            (int)activeBoard.getBoard().getwidth()));
+    for (Panel panel : model.getPanels()) {
+      ((GridPanel)panel).setPreferredSize(new Dimension(width / 4, width / 4)); // Optional
+      ((GridPanel)panel).setBorder(BorderFactory.createLineBorder(Color.black));
+      ((GridPanel)panel).setBackground(panel.getColor());
+      gridPanel.add(((GridPanel)panel));
+    }
+    this.add(gridPanel);
+
+
+  }
+
+  private void render(){
+    this.setVisible(true);
     this.revalidate();
     this.repaint();
   }
