@@ -1,5 +1,6 @@
 package model;
 
+import java.awt.*;
 import java.util.List;
 
 import controller.Controller;
@@ -12,6 +13,7 @@ public interface Model extends ReadOnlyModel{
    void sendUpdate();
    void setUp(List<Panel> panels, Board board);
    void movePebble(Panel from, Panel to);
+   List<Color> getPebbles();
    void placePebble(int index, Panel to);
    void playCard(Card card, Panel panel);
    void reorderGrid();

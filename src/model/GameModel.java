@@ -1,21 +1,26 @@
 package model;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import controller.Controller;
 import model.boards.Board;
+import model.cards.AdjacentCard;
 import model.cards.Card;
+import model.cards.CornersCard;
+import model.cards.FullRadiusCard;
 import view.Panels.Panel;
 
 public class GameModel implements Model {
-  Map<Coordinate, Panel> grid;
-  Phase phase= Phase.SETUP;
-  Controller controller;
-  List<Color> unusedPebbles;
-  List<Coordinate> inactive;
+  private Map<Coordinate, Panel> grid;
+  private Phase phase= Phase.SETUP;
+  private Controller controller;
+  private List<Color> unusedPebbles;
+  private List<Coordinate> inactive;
+  private List<Card> cards = new ArrayList<Card>();
 
   @Override
   public void setController(Controller controller) {
@@ -29,8 +34,17 @@ public class GameModel implements Model {
 
   @Override
   public void setUp(List<Panel> panels, Board board) {
-    board.createBoard(panels);
-
+    grid = board.createBoard(panels);
+    unusedPebbles = board.getPebbles();
+    for (int i=0; i<4; i++) {
+      cards.add(new AdjacentCard());
+      cards.add(new CornersCard());
+      if(i>2) {
+        cards.add(new FullRadiusCard());
+      }
+    }
+    phase = Phase.PLACEPEBBLE;
+    sendUpdate();
   }
 
   @Override
@@ -38,28 +52,47 @@ public class GameModel implements Model {
     //check for color match
     if(from.getPebble() == to.getColor() || to.getColor() == Color.white) {
       to.setPebble(from.getPebble());
+      from.setPebble(null);
     }
     else{
       throw new IllegalArgumentException("colors must match");
     }
+    sendUpdate();
+  }
 
+  @Override
+  public List<Color> getPebbles(){
+    return unusedPebbles;
   }
 
   @Override
   public void placePebble(int index, Panel to) {
     //check for color match
-    if(unusedPebbles.get(index) == to.getColor() || to.getColor() == Color.white) {
-      to.setPebble(unusedPebbles.get(index));
+    if (to.getPebble() == null) {
+      if (unusedPebbles.get(index) == to.getColor() || to.getColor() == Color.white) {
+        to.setPebble(unusedPebbles.get(index));
+        to.setPebble(unusedPebbles.get(index));
+        unusedPebbles.remove(index);
+      }
+      else {
+        throw new IllegalArgumentException("colors must match");
+      }
+      if (unusedPebbles.isEmpty()) {
+        phase = Phase.PLAYCARD;
+      }
+      sendUpdate();
     }
     else{
-      throw new IllegalArgumentException("colors must match");
+      throw new IllegalArgumentException("only one pebble per spot");
     }
-
   }
 
   @Override
   public void playCard(Card card, Panel panel) {
-    card.Play(panel);
+    List<Coordinate> coordList = card.Play(panel,grid);
+    inactive.addAll(coordList);
+    isGameOver();
+    sendUpdate();
   }
 
 
@@ -94,17 +127,22 @@ public class GameModel implements Model {
         }
       }
     }
+    sendUpdate();
 
 
   }
 
   @Override
   public boolean isGameOver() {
+    if(phase == Phase.ENDGAME ){
+      return true;
+    }
     for (Panel value : grid.values()) {
       if (value.getPebble() != null){
         return false;
       }
     }
+    phase= Phase.ENDGAME;
     return true;
   }
 

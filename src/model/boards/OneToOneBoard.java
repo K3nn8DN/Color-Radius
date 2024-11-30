@@ -1,14 +1,19 @@
 package model.boards;
 
-import java.util.List;
-import java.util.Map;
-
-import model.Coordinate;
-import view.Panels.Panel;
-
-public class OneToOneBoard implements Board {
+public class OneToOneBoard extends Board {
   @Override
-  public Map<Coordinate, Panel> createBoard(List<Panel> panels) {
-    return Map.of();
+  protected float getwidth() {
+    return 5;
   }
+
+  @Override
+  protected float getheight() {
+    return 4;
+  }
+
+  @Override
+  protected float getStop() {
+    return 2;
+  }
+
 }

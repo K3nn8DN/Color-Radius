@@ -36,6 +36,12 @@ to show it loops through the list and shows it as a pannel at the bottom of the 
 pannel is a seperate kind that when clicked sends what was clicked and updates the last clicked
 component in controller
 
+the panel is a regular JPanel and is populated with pebble Buttons which update the last click in
+the controller on click the button takes in it's color and thats what it sends
+
+
+
+
 
 view places pebles by on click a panle it sends itself to the controller
  the controller checks if if its pebble placing phase then if the pebble can be placed here if so

@@ -2,6 +2,7 @@ package controller;
 
 import java.util.List;
 
+import model.Phase;
 import model.boards.Board;
 import model.cards.Card;
 import model.Model;
@@ -9,11 +10,11 @@ import view.Panels.Panel;
 import view.View;
 
 public class GameController implements Controller {
-  Model model;
-  View view;
-  Object currentClick;
+  private Model model;
+  private View view;
+  private Object currentClick;
 
-  GameController(Model model, View view) {
+  public GameController(Model model, View view) {
     this.model = model;
     this.view = view;
     this.model.setController(this);
@@ -26,14 +27,20 @@ public class GameController implements Controller {
   @Override
   public void startGame(List<Panel> panels, Board board) {
     this.model.setUp(panels, board);
+    currentClick = null;
+
   }
 
   @Override
   public void updateGrid(Panel panel) {
     if (panel != null && panel.isActive()) {
       if (currentClick == null) {
-        if (panel.getPebble() == null) {
+
+        if (panel.getPebble() == null && model.getPhase() != Phase.PLACEPEBBLE) {
           currentClick = panel;
+        }
+        else if (model.getPhase() == Phase.PLACEPEBBLE) {
+          throw new IllegalArgumentException("click a pebble first");
         }
         else {
           throw new IllegalArgumentException("cannot play to a spot with a pebble");
@@ -73,18 +80,18 @@ public class GameController implements Controller {
 
   @Override
   public void updateClick(Object click) {
-    if (this.currentClick == click) {
-      this.currentClick = null;
-    }
-    else {
-      this.currentClick = click;
-    }
+      if (this.currentClick == click) {
+        this.currentClick = null;
+      }
+      else {
+        this.currentClick = click;
+      }
+      update();
 
   }
 
   @Override
   public void update() {
-
     switch (model.getPhase()) {
       case PLACEPEBBLE:
         view.renderPlacePebble();

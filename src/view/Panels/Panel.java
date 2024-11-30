@@ -7,5 +7,7 @@ public interface Panel {
   Color getPebble();
   void setPebble(Color color);
   Color getColor();
+  void setColor(Color color);
   boolean isActive();
+  void setActive(boolean active);
 }
