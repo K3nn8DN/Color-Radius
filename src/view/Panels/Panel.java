@@ -12,4 +12,5 @@ public interface Panel {
   void setColor(Color color);
   boolean isActive();
   void setActive(boolean active);
+  void setClicked(boolean clicked);
 }

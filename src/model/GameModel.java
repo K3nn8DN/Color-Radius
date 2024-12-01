@@ -3,8 +3,10 @@ package model;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import controller.Controller;
 import model.boards.Board;
@@ -21,7 +23,7 @@ public class GameModel implements Model {
   private List<Color> unusedPebbles;
   private List<Coordinate> inactive = new ArrayList<Coordinate>();
   private List<Card> cards = new ArrayList<Card>();
-  List<Color> removeColors = new ArrayList<Color>();
+  private List<Color> removeColors = new ArrayList<>();
 
   @Override
   public void setController(Controller controller) {
@@ -37,13 +39,14 @@ public class GameModel implements Model {
   public void setUp(List<Panel> panels, Board board) {
     grid = board.createBoard(panels);
     unusedPebbles = board.getPebbles();
-    for (int i=0; i<4; i++) {
+    for (int i=0; i<2; i++) {
       cards.add(new AdjacentCard());
       cards.add(new CornersCard());
-      if(i>2) {
+      if(i==1) {
         cards.add(new FullRadiusCard());
       }
     }
+    Collections.shuffle(cards);
     phase = Phase.PLACEPEBBLE;
     sendUpdate();
   }
@@ -58,6 +61,7 @@ public class GameModel implements Model {
     else{
       throw new IllegalArgumentException("colors must match");
     }
+    phase = Phase.PLAYCARD;
     sendUpdate();
   }
 
@@ -80,6 +84,7 @@ public class GameModel implements Model {
       }
       if (unusedPebbles.isEmpty()) {
         phase = Phase.PLAYCARD;
+        Collections.shuffle(cards);
       }
       sendUpdate();
     }
@@ -95,6 +100,8 @@ public class GameModel implements Model {
       removeColors.remove(panel.getColor());
       panel.setColor(Color.black);
       panel.setPebble(null);
+
+
     }
     else{
       throw new IllegalArgumentException("colors must match");
@@ -114,10 +121,46 @@ public class GameModel implements Model {
   @Override
   public void playCard(Card card, Panel panel) {
     inactive.addAll(card.Play(panel,grid));
-    removeColors = card.getColors();
+    removeColors.addAll(card.getColors());
+    for(int i=0; i<cards.size(); i++) {
+      if(cards.get(i).equals(card)) {
+        cards.remove(i);
+      }
+    }
+    for (Color color : card.getColors()) {
+      if(removeColors.contains(color)) {
+        removeColor(color);
+      }
+      else{
+        if(mathColorInGrid(color)) {
+          removeColors.add(color);
+        }
+      }
+    }
     phase = Phase.REMOVE;
+    if(removeColors.isEmpty()){
+      phase = Phase.PLAYPEBBLE;
+      reorderGrid();
+    }
     isGameOver();
     sendUpdate();
+  }
+
+  private void removeColor(Color color) {
+    for (int i=0; i< removeColors.size(); i++) {
+      if (removeColors.get(i) == color) {
+        removeColors.remove(i);
+      }
+    }
+  }
+
+  boolean mathColorInGrid(Color color){
+    for(Panel p : grid.values()) {
+      if(p.isActive() && p.getColor().equals(color)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override
@@ -128,31 +171,31 @@ public class GameModel implements Model {
 
   @Override
   public void reorderGrid() {
-    int floor = (int)(Math.floor(Math.sqrt(grid.size())));
-    if(inactive.size() < floor){
-      if(grid.keySet().contains(new Coordinate(1, floor+1))){
-        for (Coordinate value : grid.keySet()) {
-          if(value.getX() == floor){
-            if(grid.get(value).isActive()){
-              grid.put(inactive.get(0), grid.get(value));
-              grid.remove(value);
-            }
-            else{
-              grid.remove(value);
-            }
-          }
+    if(grid.size() > 10) {
+      // Collect active panels
+      List<Panel> activePanels = new ArrayList<>();
+      for (Map.Entry<Coordinate, Panel> entry : grid.entrySet()) {
+        if (entry.getValue().isActive()) {
+          activePanels.add(entry.getValue());
         }
       }
-      else{
-        for (Coordinate value : grid.keySet()) {
-          if(value.getY() == floor){
-            if(grid.get(value).isActive()){
-              grid.put(inactive.get(0), grid.get(value));
-              grid.remove(value);
-            }
-            else{
-              grid.remove(value);
-            }
+
+      // Clear the grid
+      grid.clear();
+
+      // Calculate new dimensions for the rectangle
+      int newSize = activePanels.size();
+      int newWidth = (int) Math.ceil(Math.sqrt(newSize));
+      int newHeight = (int) Math.ceil((double) newSize / newWidth);
+
+      // Rebuild the grid
+      int counter = 0;
+      for (int row = 1; row <= newHeight; row++) {
+        for (int col = 1; col <= newWidth; col++) {
+          if (counter < activePanels.size()) {
+            Coordinate coord = new Coordinate(row, col);
+            grid.put(coord, activePanels.get(counter));
+            counter++;
           }
         }
       }
@@ -165,6 +208,11 @@ public class GameModel implements Model {
   @Override
   public boolean isGameOver() {
     if(phase == Phase.ENDGAME ){
+      phase= Phase.ENDGAME;
+      return true;
+    }
+    if(cards.isEmpty()){
+      phase= Phase.ENDGAME;
       return true;
     }
     for (Panel value : grid.values()) {
@@ -179,6 +227,24 @@ public class GameModel implements Model {
   @Override
   public Phase getPhase() {
     return phase;
+  }
+
+  @Override
+  public void setPhase(Phase phase) {
+    this.phase=phase;
+  }
+
+  @Override
+  public String endPhase() {
+    if(phase == Phase.ENDGAME){
+      if(cards.isEmpty()){
+        return "Game Won";
+      }
+      else{
+        return "Game Lost";
+      }
+    }
+    return "Game Not Over";
   }
 
   @Override

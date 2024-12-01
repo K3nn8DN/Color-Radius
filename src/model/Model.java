@@ -2,6 +2,7 @@ package model;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Set;
 
 import controller.Controller;
 import model.boards.Board;
@@ -20,6 +21,9 @@ public interface Model extends ReadOnlyModel{
    void playCard(Card card, Panel panel);
    List<Card> getCards();
    void reorderGrid();
+   void setPhase(Phase phase);
+   String endPhase();
+
 
 
 }

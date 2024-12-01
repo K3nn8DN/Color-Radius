@@ -16,14 +16,16 @@ public class GridPanel extends JPanel implements Panel {
   Color color;
   boolean isActive=true;
   Coordinate coord;
+  GameView frame;
+  boolean clicked=false;
 
 
-  public GridPanel(Controller controller) {
-    this.controller=controller;
+  public GridPanel(GameView view) {
+    this.controller=view.getController();
     this.addMouseListener(new GridPanel.GridClickListener(this));
     this.color=Color.BLACK;
     this.setPreferredSize(new Dimension(200, 200));
-
+    this.frame=view;
   }
 
   @Override
@@ -42,15 +44,25 @@ public class GridPanel extends JPanel implements Panel {
     int y = (height - dotSize) / 2;
 
     if(pebble != null) {
-      g.setColor(Color.BLACK); // Border color
-      g.fillOval(x - 2, y - 2,
-              dotSize + 2 * 2,
-              dotSize + 2 * 2);
+      if(clicked && color != Color.white) {
+        g.setColor(Color.white);// Border color
+      }
+      if(clicked && color == Color.white ) {
+        g.setColor(Color.black);
+      }
+      else{
+        g.setColor(Color.BLACK);// Border color
+      }
+        g.fillOval(x - 2, y - 2,
+                dotSize + 2 * 2,
+                dotSize + 2 * 2);
+
 
       // Draw the dot (a filled circle)
       g.setColor(pebble); // Dot color
       g.fillOval(x, y, dotSize, dotSize);
     }
+
 
   }
 
@@ -89,6 +101,11 @@ public class GridPanel extends JPanel implements Panel {
     this.isActive = active;
   }
 
+  @Override
+  public void setClicked(boolean clicked) {
+    this.clicked=clicked;
+  }
+
 
   static class GridClickListener implements MouseListener {
     private final GridPanel panel;
@@ -99,13 +116,10 @@ public class GridPanel extends JPanel implements Panel {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-      GridPanel clickedPanel = (GridPanel) e.getSource();
-//      if (panel.frame.getActiveCard() != null) {
-//        panel.frame.getActiveCard().setBorder(BorderFactory.createLineBorder(Color.GRAY));
-//      }
-//      panel.frame.setActiveCard(clickedPanel);
-//      panel.frame.getActiveCard().setBorder(BorderFactory.createLineBorder(Color.ORANGE, 3));
       panel.sendController();
+      panel.frame.setactivePebble(panel);
+      panel.controller.update();
+
     }
 
     @Override

@@ -26,11 +26,11 @@ public class GameController implements Controller {
 
   @Override
   public void startGame(List<Panel> panels, Board board, int handSize) {
-    if(handSize != 0) {
+    if (handSize != 0) {
       this.model.setUp(panels, board);
       currentClick = null;
     }
-    else{
+    else {
       throw new IllegalArgumentException("Hand size must be greater than 0");
     }
 
@@ -38,66 +38,72 @@ public class GameController implements Controller {
 
   @Override
   public void updateGrid(Panel panel) {
-    if (panel != null && panel.isActive()) {
-      if (currentClick == null) {
-
-        if (panel.getPebble() == null && model.getPhase() != Phase.PLACEPEBBLE) {
-          currentClick = panel;
-        }
-        else if (model.getPhase() == Phase.PLACEPEBBLE) {
-          throw new IllegalArgumentException("click a pebble first");
-        }
-        else if(model.getPhase() == Phase.REMOVE){
-          model.removePannel(panel);
-        }
-        else if (model.getPhase() == Phase.PLAYCARD){
-          throw new IllegalArgumentException("click a card first");
-        }
-        else {
-          throw new IllegalArgumentException("cannot play to a spot with a pebble");
-        }
-      }
-      else {
-        switch (model.getPhase()) {
-          case PLACEPEBBLE:
-            model.placePebble((int) currentClick, panel);
-            currentClick = null;
-            break;
-          case PLAYPEBBLE:
-            if (currentClick.equals(panel)) {
-              currentClick = null;
-            }
-            else {
-              model.movePebble((Panel) currentClick, panel);
-              currentClick = null;
-            }
-            break;
-          case PLAYCARD:
-            model.playCard((Card)currentClick, panel);
-            currentClick = null;
-            break;
-          default:
-            throw new IllegalStateException("game has to be playing");
-        }
-
-      }
-
+    if (panel == null || !(panel.isActive())) {
+      throw new IllegalArgumentException("must be an active panel");
+    }
+    if (currentClick == null) {
+      handeInitialClick(panel);
     }
     else {
-      throw new IllegalArgumentException("must be an active panel");
+      handleSecondClick(panel);
+    }
+
+  }
+
+  private void handeInitialClick(Panel panel) {
+    switch (model.getPhase()) {
+      case PLAYPEBBLE:
+        currentClick = panel;
+        panel.setClicked(true);
+        break;
+      case PLACEPEBBLE:
+        throw new IllegalArgumentException("click a pebble first");
+      case REMOVE:
+        model.removePannel(panel);
+        break;
+      case PLAYCARD:
+        throw new IllegalArgumentException("click a card first");
+      default:
+        throw new IllegalArgumentException("cannot play to a spot with a pebble");
+    }
+  }
+
+  private void handleSecondClick(Panel panel) {
+    switch (model.getPhase()) {
+      case PLACEPEBBLE:
+        model.placePebble((int) currentClick, panel);
+        currentClick = null;
+        break;
+      case PLAYPEBBLE:
+        if (panel.getPebble() != null) {
+          ((Panel) currentClick).setClicked(false);
+          currentClick = panel;
+          panel.setClicked(true);
+        }
+        else {
+          model.movePebble((Panel) currentClick, panel);
+          currentClick = null;
+        }
+        break;
+      case PLAYCARD:
+        model.playCard((Card) currentClick, panel);
+        currentClick = null;
+        break;
+      default:
+        throw new IllegalStateException("game has to be playing");
     }
   }
 
 
   @Override
   public void updateClick(Object click) {
-      if (this.currentClick == click) {
-        this.currentClick = null;
-      }
-      else {
-        this.currentClick = click;
-      }
-      update();
+    if (this.currentClick == click) {
+      this.currentClick = null;
+    }
+    else {
+      this.currentClick = click;
+    }
+    update();
 
   }
 
@@ -124,6 +130,6 @@ public class GameController implements Controller {
 
   @Override
   public void handleErrorMessage(String error) {
-
+    view.handleErrorMessage(error);
   }
 }
