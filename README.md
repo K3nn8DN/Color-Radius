@@ -20,7 +20,7 @@ other pebbles from the grid.
 
     Playing:
         Pebble Placement Phase: Place all pebbles strategically on the grid.
-        Card Phase: Play a card to a pebble to apply its effect. Cards may remove 
+        Card Phase: Play a card to a pebble to apply it's effect. Cards may remove 
 pebbles in a radius, adjacency, or corners —there are also cards that offer helpful effects.
         Pebble Movement Phase: Move one pebble to an unoccupied panel.
         Repeat until:
