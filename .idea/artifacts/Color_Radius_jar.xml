@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="Color Radius:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Color_Radius_jar</output-path>
+    <root id="archive" name="Color Radius.jar">
+      <element id="module-output" name="Color Radius" />
+    </root>
+  </artifact>
+</component>

@@ -15,17 +15,17 @@ public class BoardPanel extends JPanel {
   GameView frame;
 
 
-  public BoardPanel(Image image, Board board, GameView gameView) {
-    this.image = image;
+  public BoardPanel(Board board, GameView gameView) {
     this.board = board;
     this.frame = gameView;
     this.addMouseListener(new BoardPanel.BoardClickListener(this));
   }
 
-  public BoardPanel(Board board, GameView gameView) {
-    this.board = board;
-    this.frame = gameView;
-    this.addMouseListener(new BoardPanel.BoardClickListener(this));
+  @Override
+  protected void paintComponent(Graphics g) {
+    super.paintComponent(g);
+    // Draw the background image, scaling it to fit the panel
+    g.drawImage(board.getImage(), 0, 0, getWidth(), getHeight(), this);
   }
 
   public Board getBoard() {

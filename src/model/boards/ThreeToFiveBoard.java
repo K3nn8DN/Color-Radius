@@ -1,5 +1,9 @@
 package model.boards;
 
+import java.awt.*;
+
+import javax.swing.*;
+
 public class ThreeToFiveBoard extends Board {
   @Override
   public float getwidth() {
@@ -14,5 +18,11 @@ public class ThreeToFiveBoard extends Board {
   @Override
   protected float getStop() {
     return 3;
+  }
+
+  @Override
+  public Image getImage() {
+    Image image = new ImageIcon(getClass().getResource("/ThreeFive.png")).getImage();
+    return image;
   }
 }

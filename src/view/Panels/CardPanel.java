@@ -12,22 +12,11 @@ import model.cards.Card;
 import view.GameView;
 
 public class CardPanel  extends JPanel{
-  Image image;
   Card card;
   GameView frame;
   Controller controller;
-  int index;
 
 
-  public CardPanel(Image image, Card card, GameView gameView,Controller controller,int index) {
-    this.image = image;
-    this.card = card;
-    this.frame = gameView;
-    this.controller = controller;
-    this.addMouseListener(new CardPanel.CardClickListener(this));
-
-
-  }
   public CardPanel(Card card, GameView gameView,Controller controller, int index) {
     this.card = card;
     this.frame = gameView;
@@ -39,6 +28,13 @@ public class CardPanel  extends JPanel{
 
   public void sendController() {
     controller.updateClick(this.card);
+  }
+
+  @Override
+  protected void paintComponent(Graphics g) {
+    super.paintComponent(g);
+    // Draw the background image, scaling it to fit the panel
+    g.drawImage(card.getImage(), 0, 0, getWidth(), getHeight(), this);
   }
 
 

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.*;
+
 import model.Coordinate;
 import view.Panels.Panel;
 
@@ -25,6 +27,12 @@ public class AdjacentCard extends Card {
   @Override
   public String description() {
     return "Removes all Adjacent Cards next to a piece";
+  }
+
+  @Override
+  public Image getImage() {
+    Image adjacent = new ImageIcon(getClass().getResource("/AdjacentCard.png")).getImage();
+    return adjacent;
   }
 }
 

@@ -1,6 +1,10 @@
 package model.cards;
 
 
+import java.awt.*;
+
+import javax.swing.*;
+
 import model.Coordinate;
 
 public class CornersCard extends Card {
@@ -19,6 +23,12 @@ public class CornersCard extends Card {
   @Override
   public String description() {
     return "Removes all pebbles in the four corners of a piece";
+  }
+
+  @Override
+  public Image getImage() {
+    Image corner = new ImageIcon(getClass().getResource("/CornersCard.png")).getImage();
+    return corner;
   }
 
 }

@@ -86,8 +86,13 @@ public class GameController implements Controller {
         }
         break;
       case PLAYCARD:
-        model.playCard((Card) currentClick, panel);
-        currentClick = null;
+        if(panel.getPebble() != null) {
+          model.playCard((Card) currentClick, panel);
+          currentClick = null;
+        }
+        else{
+          throw new IllegalArgumentException("must play a card to a place with a pebble");
+        }
         break;
       default:
         throw new IllegalStateException("game has to be playing");

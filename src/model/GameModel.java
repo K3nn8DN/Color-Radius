@@ -3,10 +3,8 @@ package model;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import controller.Controller;
 import model.boards.Board;
@@ -175,7 +173,7 @@ public class GameModel implements Model {
       // Collect active panels
       List<Panel> activePanels = new ArrayList<>();
       for (Map.Entry<Coordinate, Panel> entry : grid.entrySet()) {
-        if (entry.getValue().isActive()) {
+        if (entry.getValue().isActive() ) {
           activePanels.add(entry.getValue());
         }
       }
@@ -204,6 +202,7 @@ public class GameModel implements Model {
 
 
   }
+  
 
   @Override
   public boolean isGameOver() {
@@ -215,9 +214,14 @@ public class GameModel implements Model {
       phase= Phase.ENDGAME;
       return true;
     }
+    int i = 0;
+    //if the number of panels left is 3 or less
     for (Panel value : grid.values()) {
       if (value.getPebble() != null){
-        return false;
+        if(i>=3) {
+          return false;
+        }
+        i++;
       }
     }
     phase= Phase.ENDGAME;

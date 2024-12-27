@@ -14,11 +14,14 @@ public abstract class Card {
   protected List<Coordinate> targetCoords = new ArrayList<Coordinate>();
   protected List<Coordinate> returnCoords = new ArrayList<Coordinate>();
 
+
   protected abstract void addTargetCoords();
 
   public abstract String toString();
 
   public abstract String description();
+
+  public abstract Image getImage();
 
   public List<Coordinate> Play(Panel panel, Map<Coordinate, Panel> grid) {
 

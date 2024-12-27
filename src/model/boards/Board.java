@@ -1,6 +1,6 @@
 package model.boards;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -65,5 +65,7 @@ public abstract class Board {
   public int getSize(){
     return (int)(getheight()*getwidth());
   }
+
+  public abstract Image getImage();
 
 }

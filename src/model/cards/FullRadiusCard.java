@@ -1,6 +1,10 @@
 package model.cards;
 
 
+import java.awt.*;
+
+import javax.swing.*;
+
 import model.Coordinate;
 
 
@@ -24,5 +28,12 @@ public class FullRadiusCard extends Card {
   @Override
   public String description() {
     return "Remove all pebbles around a piece";
+  }
+
+  @Override
+  public Image getImage() {
+    Image fullRadius =
+            new ImageIcon(getClass().getResource("/FullRadiusCard.png")).getImage();
+    return fullRadius;
   }
 }
